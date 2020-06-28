@@ -14,4 +14,3 @@ soup.find('title')
 3、CSV相关
 mytuple=[(movie_name,movie_time,movie_type_str)]该类写入为列写入
 mylist=[movie_name,movie_time,movie_type_str]为行写入
-.to_csv默认为写，追加mode='a+''
