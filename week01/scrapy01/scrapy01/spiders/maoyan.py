@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.selector import Selector
+from scrapy01.items import Scrapy01Item
+
 
 class MaoyanSpider(scrapy.Spider):
     name = 'maoyan'
@@ -10,9 +12,6 @@ class MaoyanSpider(scrapy.Spider):
     # start_requests()方法读取start_urls列表中的URL并生成Request对象，发送给引擎。
     # 引擎再指挥其他组件向网站服务器发送请求，下载网页
     def start_requests(self):
-        # # for i in range(0, 10):
-        #     i=0
-        #     url = f'https://movie.douban.com/top250?start={i*25}'
             yield scrapy.Request(
                 self.start_urls[0],
                # url=start_urls,
@@ -26,29 +25,57 @@ class MaoyanSpider(scrapy.Spider):
             # callback 回调函数，引擎回将下载好的页面(Response对象)发给该方法，执行数据解析
             # 这里可以使用callback指定新的函数，不是用parse作为默认的回调参数
 
-    # 解析函数
     def parse(self, response):
-        # 打印网页的url
-        #print(response.url)
-        # 打印网页的内容
-        print(response.text)
+        title_list = Selector(response=response).xpath('//div[@class="channel-detail movie-item-title"]')
+        #print(title_list)
+        for i in range(1,11):
+            #print(title_list[i])
+            item = Scrapy01Item()
+            title = title_list[i].xpath('./a/text()').extract_first().strip()
+            #print(title)
+            link = title_list[i].xpath('./a/@href').extract_first().strip()
+            mylink = 'https://maoyan.com' + link
+            #print(mylink)
+            yield scrapy.Request(url= mylink, meta={'item': item}, callback=self.parse2)
+   #         print(scrapy.Request)
 
-        # soup = BeautifulSoup(response.text, 'html.parser')
-        # title_list = soup.find_all('div', attrs={'class': 'hd'})
-        movies = Selector(response=response).xpath('//*[@id="app"]/div/div[2]/div[2]/dl/dd[1]/div[2]')
-        for movie in movies:
-        #     title = i.find('a').find('span',).text
-        #     link = i.find('a').get('href')
-            # 路径使用 / .  .. 不同的含义　
-            title = movie.xpath('./a/text()')
-            link = movie.xpath('./a/@href')
-            print('-----------')
-            print(title)
-            print(link)
-            # print('-----------')
-            # print(title.extract())
-            # print(link.extract())
-            # print(title.extract_first())
-            # print(link.extract_first())
-            # print(title.extract_first().strip())
-            # print(link.extract_first().strip())
+    def parse2(self, response):
+        movie_type_list = []
+        amovie = Selector(response=response).xpath('//html/body/div[3]/div/div[2]/div[1]/ul/li[1]/a[1]/text()').extract_first().strip()
+        movie_type_list.append(amovie)
+        movie_type_str = ','.join(movie_type_list)
+        print("------------")
+        print(movie_type_str)
+        print("------------")
+
+      #  print(title_list2.xpath('./a/text()'))
+        #item = response.meta['item']
+        #print(item)
+        # item['content'] = content
+        # yield item
+    # 解析函数
+    # def parse(self, response):
+    #     # 打印网页的url
+    #     #print(response.url)
+    #     # 打印网页的内容
+    #     print(response.text)
+    #
+    #     # soup = BeautifulSoup(response.text, 'html.parser')
+    #     # title_list = soup.find_all('div', attrs={'class': 'hd'})
+    #     movies = Selector(response=response).xpath('//*[@id="app"]/div/div[2]/div[2]/dl/dd[1]/div[2]')
+    #     for movie in movies:
+    #     #     title = i.find('a').find('span',).text
+    #     #     link = i.find('a').get('href')
+    #         # 路径使用 / .  .. 不同的含义　
+    #         title = movie.xpath('./a/text()')
+    #         link = movie.xpath('./a/@href')
+    #         print('-----------')
+    #         print(title)
+    #         print(link)
+    #         # print('-----------')
+    #         # print(title.extract())
+    #         # print(link.extract())
+    #         # print(title.extract_first())
+    #         # print(link.extract_first())
+    #         # print(title.extract_first().strip())
+    #         # print(link.extract_first().strip())

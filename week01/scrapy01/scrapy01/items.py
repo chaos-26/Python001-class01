@@ -12,16 +12,7 @@ class Scrapy01Item(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     #pass
-    movie_name = scrapy.Field()
+    movie_title = scrapy.Field()
     movie_type = scrapy.Field()
     movie_time = scrapy.Field()
-
-class DoubanmovieItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
-
-    # 注释原有的pass
-    # pass
-    title = scrapy.Field()
-    link = scrapy.Field()
-    content = scrapy.Field()
+    movie_link = scrapy.Field()
