@@ -41,13 +41,13 @@ class MaoyanSpider(scrapy.Spider):
 
     def parse2(self, response):
         movie_type_list = []
-        amovie = Selector(response=response).xpath('//html/body/div[3]/div/div[2]/div[1]/ul/li[1]/a[1]/text()').extract_first().strip()
-        movie_type_list.append(amovie)
+        amovie = Selector(response=response).xpath('//div[@class="movie-brief-container"]')
+        #print(amovie)
+        for amovie_type in amovie.xpath('./ul/li/a/text()'):
+            movie_type_list.append(amovie_type.extract().strip())
+            #print(amovie_type.extract())
         movie_type_str = ','.join(movie_type_list)
-        print("------------")
         print(movie_type_str)
-        print("------------")
-
       #  print(title_list2.xpath('./a/text()'))
         #item = response.meta['item']
         #print(item)
