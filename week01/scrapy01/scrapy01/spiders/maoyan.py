@@ -40,6 +40,7 @@ class MaoyanSpider(scrapy.Spider):
    #         print(scrapy.Request)
 
     def parse2(self, response):
+        item = Scrapy01Item()
         movie_type_list = []
         amovie = Selector(response=response).xpath('//div[@class="movie-brief-container"]')
         #print(amovie)
@@ -47,35 +48,12 @@ class MaoyanSpider(scrapy.Spider):
             movie_type_list.append(amovie_type.extract().strip())
             #print(amovie_type.extract())
         movie_type_str = ','.join(movie_type_list)
-        print(movie_type_str)
+        movie_title=(amovie.xpath('./h1/text()').extract_first().strip())
+        movie_time=(amovie.xpath('./ul/li[3]/text()').extract_first().strip())
       #  print(title_list2.xpath('./a/text()'))
         #item = response.meta['item']
         #print(item)
-        # item['content'] = content
-        # yield item
-    # 解析函数
-    # def parse(self, response):
-    #     # 打印网页的url
-    #     #print(response.url)
-    #     # 打印网页的内容
-    #     print(response.text)
-    #
-    #     # soup = BeautifulSoup(response.text, 'html.parser')
-    #     # title_list = soup.find_all('div', attrs={'class': 'hd'})
-    #     movies = Selector(response=response).xpath('//*[@id="app"]/div/div[2]/div[2]/dl/dd[1]/div[2]')
-    #     for movie in movies:
-    #     #     title = i.find('a').find('span',).text
-    #     #     link = i.find('a').get('href')
-    #         # 路径使用 / .  .. 不同的含义　
-    #         title = movie.xpath('./a/text()')
-    #         link = movie.xpath('./a/@href')
-    #         print('-----------')
-    #         print(title)
-    #         print(link)
-    #         # print('-----------')
-    #         # print(title.extract())
-    #         # print(link.extract())
-    #         # print(title.extract_first())
-    #         # print(link.extract_first())
-    #         # print(title.extract_first().strip())
-    #         # print(link.extract_first().strip())
+        item['movie_title'] = movie_title
+        item['movie_type'] = movie_type_str
+        item['movie_time'] = movie_time
+        yield item
